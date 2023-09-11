@@ -23,6 +23,7 @@ class Category(models.Model):
 
     class Meta:
         db_table = "places_category"
+        verbose_name_plural = "categories"
     
     def __str__(self):
         return self.name
@@ -34,6 +35,7 @@ class Gallery(models.Model):
 
     class Meta:
         db_table = "places_gallery"
+        verbose_name_plural = "gallery"
     
     def __str__(self):
         return str(self.id)
