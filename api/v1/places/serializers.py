@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from places.models import Place,Gallery
+from places.models import Place,Gallery,Comment
 from rest_framework import serializers
 
 
@@ -32,3 +32,9 @@ class PlaceDetailsSerializer(ModelSerializer):
         images = Gallery.objects.filter(place=instance)
         serializer = GallerySerializer(images, many=True,context={"request":request})
         return serializer.data
+    
+
+class CommentSerializer(ModelSerializer):
+    class Meta:
+        fields = ("id", "comment", "user", "date")
+        model = Comment

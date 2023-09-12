@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,AllowAny
 
-from api.v1.places.serializers import PlaceSerializer,PlaceDetailsSerializer
+from api.v1.places.serializers import PlaceSerializer,PlaceDetailsSerializer,CommentSerializer
 from places.models import Place,Comment
 from django.db.models import Q
 
@@ -121,3 +121,29 @@ def create_comment(request,pk):
 
     return Response(response_data)
     
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def comments(request,pk):
+    if Place.objects.filter(pk=pk).exists():
+        place = Place.objects.get(pk=pk)
+
+        instances = Comment.objects.filter(place=place)
+        context = {
+            "request":request
+        }
+
+        serializer = CommentSerializer(instances,many=True,context=context)
+        
+        response_data = {
+            "status_code" : 6000, 
+            "data" : serializer.data
+        }
+
+    else:
+        response_data = {
+            "status_code" : 6001,
+            "data" : "Place not exist"
+        }
+    
+    return Response(response_data)
