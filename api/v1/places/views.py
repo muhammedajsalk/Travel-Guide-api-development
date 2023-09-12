@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 
 from api.v1.places.serializers import PlaceSerializer,PlaceDetailsSerializer
 from places.models import Place
+from django.db.models import Q
 
 
 @api_view(["GET"])
@@ -13,7 +14,7 @@ def places(request):
    
     q = (request.GET.get("q"))
     if q:
-        instances = instances.filter(name__istartswith=q)
+        instances = instances.filter(Q(name__istartswith=q, is_deleted=False) | Q(place__icontains=q, is_deleted=False))
 
     context = {
         "request":request
