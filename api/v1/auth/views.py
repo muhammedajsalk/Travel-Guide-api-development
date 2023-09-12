@@ -1,4 +1,5 @@
 import requests
+import json
 
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
@@ -31,8 +32,13 @@ def create(request):
             "Content-Type" : "application/json"
         }
 
-        data = f'"username": "{email}","password": "{password}"'
-        final_data = "{" + data + "}"
+        #data = f'"username": "{email}","password": "{password}"'
+        #final_data = "{" + data + "}"
+
+        data = {
+            "username" : email,
+            "password" : password,
+        }
 
         protocol = "http://"
         if request.is_secure():
@@ -42,7 +48,7 @@ def create(request):
 
         url = protocol + host + "/api/v1/auth/token/"
        
-        response = requests.post(url,headers=headers,data=final_data)
+        response = requests.post(url,headers=headers,data=json.dumps(data))
 
         if response.status_code == 200:
 
