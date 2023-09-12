@@ -11,6 +11,10 @@ from places.models import Place
 def places(request):
     instances = Place.objects.filter(is_deleted=False)
    
+    q = (request.GET.get("q"))
+    if q:
+        instances = instances.filter(name__istartswith=q)
+
     context = {
         "request":request
     }
