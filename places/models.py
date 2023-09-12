@@ -39,3 +39,17 @@ class Gallery(models.Model):
     
     def __str__(self):
         return str(self.id)
+    
+
+class Comment(models.Model):
+    place = models.ForeignKey("places.Place",on_delete=models.CASCADE)
+    user = models.ForeignKey("auth.User",on_delete=models.CASCADE)
+    date = models.DateTimeField()
+    comment = models.TextField()
+
+    class Meta:
+        db_table = "places_comment"
+        verbose_name_plural = "comment"
+    
+    def __str__(self):
+        return str(self.id)
