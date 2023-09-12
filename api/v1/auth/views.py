@@ -1,3 +1,5 @@
+import requests
+
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,AllowAny
@@ -24,17 +26,41 @@ def create(request):
             password = password,
             first_name = name
         )
-        
-        response_data = {
-            "status_code" : 6000,
-            "data" : "hello"
-        }
-    else:
 
+        headers = {
+            "Content-Type" : "application/json"
+        }
+
+        data = f'"username": "{email}","password": "{password}"'
+        final_data = "{" + data + "}"
+
+        protocol = "http://"
+        if request.is_secure():
+            protocol = "https://"
+        
+        host = request.get_host()
+
+        url = protocol + host + "/api/v1/auth/token/"
+       
+        response = requests.post(url,headers=headers,data=final_data)
+
+        if response.status_code == 200:
+
+            response_data = {
+                "status_code" : 6000,
+                "data" : response.json(),
+                "message" : "Account created"
+            }
+        else:
+            response_data = {
+                "status_code" : 6001,
+                "data" : "An error occurred"
+            }
+
+    else:
          response_data = {
             "status_code" : 6001,
             "data" : "this account already exists"
         }
-
 
     return Response(response_data)
