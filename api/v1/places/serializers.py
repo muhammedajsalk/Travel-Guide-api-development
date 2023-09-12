@@ -35,6 +35,16 @@ class PlaceDetailsSerializer(ModelSerializer):
     
 
 class CommentSerializer(ModelSerializer):
+
+    user = serializers.SerializerMethodField()
+    date = serializers.SerializerMethodField()
+
     class Meta:
         fields = ("id", "comment", "user", "date")
         model = Comment
+    
+    def get_user(self, instance):
+        return instance.user.first_name
+    
+    def get_date(self, instance):
+        return instance.date.strftime("%d %B %Y")
