@@ -14,7 +14,7 @@ def places(request):
    
     q = (request.GET.get("q"))
     if q:
-        instances = instances.filter(Q(name__istartswith=q, is_deleted=False) | Q(place__icontains=q, is_deleted=False))
+        instances = instances.filter(category__name__icontains=q)
 
     context = {
         "request":request
