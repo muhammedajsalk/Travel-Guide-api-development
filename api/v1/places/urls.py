@@ -6,4 +6,5 @@ urlpatterns = [
     path('', views.places),
     path('view/<int:pk>', views.place),
     path('protected/<int:pk>', views.protected),
+    path('comment/create/<int:pk>/', views.create_comment),
 ]

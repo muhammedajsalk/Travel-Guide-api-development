@@ -1,9 +1,11 @@
+import datetime
+
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,AllowAny
 
 from api.v1.places.serializers import PlaceSerializer,PlaceDetailsSerializer
-from places.models import Place
+from places.models import Place,Comment
 from django.db.models import Q
 
 from api.v1.places.pagination import StandardResultSetPagination
@@ -90,3 +92,32 @@ def protected(request,pk):
         }
 
         return Response(response_data)
+    
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def create_comment(request,pk):
+    if Place.objects.filter(pk=pk).exists():
+        instances = Place.objects.get(pk=pk)
+        comment = request.data["comment"]
+        
+        Comment.objects.create(
+            user = request.user,
+            comment = comment,
+            place = instances,
+            date = datetime.datetime.now()
+        )
+        
+        response_data = {
+            "status_code" : 6000,
+            "message" : "Succesfully added"
+        }
+
+    else:
+        response_data = {
+            "status_code" : 6001,
+            "data" : "Place not exist"
+        }
+
+    return Response(response_data)
+    
