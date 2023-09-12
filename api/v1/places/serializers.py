@@ -38,13 +38,20 @@ class CommentSerializer(ModelSerializer):
 
     user = serializers.SerializerMethodField()
     date = serializers.SerializerMethodField()
+    replys = serializers.SerializerMethodField()
 
     class Meta:
-        fields = ("id", "comment", "user", "date")
+        fields = ("id", "comment", "user", "date","replys")
         model = Comment
     
     def get_user(self, instance):
         return instance.user.first_name
+    
+    def get_replys(self, instance):
+        instances = Comment.objects.filter(parent_comment=instance)
+
+        serializer = CommentSerializer(instances,many=True)
+        return serializer.data
     
     def get_date(self, instance):
         return instance.date.strftime("%d %B %Y")

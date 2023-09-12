@@ -98,16 +98,26 @@ def protected(request,pk):
 @permission_classes([IsAuthenticated])
 def create_comment(request,pk):
     if Place.objects.filter(pk=pk).exists():
-        instances = Place.objects.get(pk=pk)
+        place = Place.objects.get(pk=pk)
         comment = request.data["comment"]
-        
-        Comment.objects.create(
+        try:
+            parent_comment = request.data["parent_comment"]
+        except:
+            parent_comment = None
+
+        instance = Comment.objects.create(
             user = request.user,
             comment = comment,
-            place = instances,
+            place = place,
             date = datetime.datetime.now()
         )
         
+        if parent_comment:
+            if Comment.objects.filter(pk=parent_comment).exists():
+                parent =  Comment.objects.get(pk=parent_comment)
+                instance.parent_comment = parent
+                instance.save()
+
         response_data = {
             "status_code" : 6000,
             "message" : "Succesfully added"
@@ -128,7 +138,7 @@ def comments(request,pk):
     if Place.objects.filter(pk=pk).exists():
         place = Place.objects.get(pk=pk)
 
-        instances = Comment.objects.filter(place=place)
+        instances = Comment.objects.filter(place=place,parent_comment=None)
         context = {
             "request":request
         }
