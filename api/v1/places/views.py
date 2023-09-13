@@ -157,3 +157,30 @@ def comments(request,pk):
         }
     
     return Response(response_data)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def like(request,pk):
+    if Place.objects.filter(pk=pk).exists():
+        instance = Place.objects.get(pk=pk)
+
+        if instance.likes.filter(username=request.user.username).exists():
+            instance.likes.remove(request.user)
+            message = "Like removed"
+        else:
+            instance.likes.add(request.user)
+            message = "Liked"
+    
+        response_data = {
+            "status_code" : 6000,
+            "message" : message
+        }
+
+    else:
+        response_data = {
+            "status_code" : 6001,
+            "message" : "Place not exist"
+        }
+
+    return Response(response_data)

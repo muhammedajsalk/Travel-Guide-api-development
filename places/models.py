@@ -10,6 +10,8 @@ class Place(models.Model):
     description = models.TextField()
     is_deleted = models.BooleanField(default=False)
 
+    likes = models.ManyToManyField("auth.User")
+
     class Meta:
         db_table = "places_place"
     

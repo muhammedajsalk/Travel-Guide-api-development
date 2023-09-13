@@ -4,9 +4,15 @@ from rest_framework import serializers
 
 
 class PlaceSerializer(ModelSerializer):
+
+    likes = serializers.SerializerMethodField()
+
     class Meta:
-        fields = ("id", "name", "featured_image", "place")
+        fields = ("id", "name", "featured_image", "place","likes")
         model = Place
+
+    def get_likes(self, instance):
+        return instance.likes.count()
 
 
 class GallerySerializer(ModelSerializer):
